@@ -12,10 +12,6 @@ app = Flask(__name__)
 def index():
     return send_file("index.html")
 
-@app.route("/render")
-def render():
-    return send_file("render.html")
-
 global_rules = open(join("data", "global.ty")).read() + "\n"
 compiler = join("data", "typst")
 
