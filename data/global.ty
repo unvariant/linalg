@@ -1,0 +1,97 @@
+#let title = "Constrained Optimization"
+#let authors = (
+    "Ryan Bai",
+    "Owen Kwan",
+)
+#let date = "December 15, 2023"
+
+// Set the document's basic properties.
+#set document(author: authors, title: title)
+#set page(height: auto, width: 1200pt, margin: (
+  top: 0.5cm,
+  bottom: 0.2em,
+  x: 0cm,
+))
+
+#set text(font: "New Computer Modern", lang: "en", size: 24pt)
+#show raw: set text(font: "New Computer Modern Mono")
+
+#import "@preview/ctheorems:1.1.0": *
+#show: thmrules
+
+#import "@preview/physica:0.9.0"
+#import "@preview/physica:0.9.0": TT, vecrow, grad, pdv
+
+// we use vr for all vector formatting, this also makes it easy to change later
+#let vr = physica.vectorarrow
+
+#let todo(body) = {
+  set text(red)
+  [*TODO*: #body]
+}
+
+#let meta(body) = {
+  set text(blue)
+  [*META*: #body]
+}
+
+#let theorem = thmbox(
+  "theorem",
+  "Theorem",
+  base_level: 0,
+  breakable: false,
+  stroke: gradient.conic(..color.map.rainbow)
+)
+
+#let thm_problem = thmbox(
+  "problem",
+  "Problem",
+  base_level: 0,
+  breakable: false,
+  stroke: gradient.conic(..color.map.rainbow),
+)
+
+#let lemma = thmbox(
+  "lemma",
+  "Lemma",
+  base_level: 0,
+  breakable: false,
+  stroke: gradient.conic(..color.map.rainbow),
+)
+
+#let hint(body) = {
+  block(body, breakable: false, inset: 10pt, width: 100%, radius: 5pt, stroke: none)
+}
+
+#let rainbow(body) = {
+  block(body, inset: 18pt, width: 100%, radius: 5pt, stroke: gradient.conic(..color.map.rainbow))
+}
+
+#let problem(statement: none, hints: none, answer: none, solution: none, problem_label: none) = {
+  if statement == none or hints == none or answer == none or solution == none {
+    panic("missing args")
+  }
+
+  set block(inset: 10pt, width: 100%, radius: 5pt, stroke: gradient.conic(..color.map.rainbow))
+
+  [
+    #thm_problem[
+      #statement
+
+      #if hints.len() == 0 [
+        No hints for this problem
+      ] else {
+        for (i, h) in hints.enumerate() [
+          *Hint #(i + 1)*: #h\
+        ]
+      }
+    ]
+    #if problem_label != none {
+      label(problem_label)
+    }
+
+    #block(breakable: false)[
+      *Solution* (answer #answer): #solution
+    ]
+  ]
+}

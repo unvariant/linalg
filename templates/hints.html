@@ -1,0 +1,14 @@
+{% if hints|length != 0 %}
+    {% for hint in hints %}
+    <details>
+        <summary>{{ hint[0] }}</summary>
+        {% autoescape false %}
+            {{ hint[1] }}
+        {% endautoescape %}
+    </details>
+    {% endfor %}
+{% else %}
+    <details>
+        <summary>No hints.</summary>
+    </details>
+{% endif %}

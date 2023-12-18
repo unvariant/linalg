@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Svg Document</title>
+    <script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
+    <style type="text/css">
+      @font-face {
+        font-family: "Computer Modern";
+        src: url('/static/fonts/cmunss.otf');
+      }
+
+      /* @font-face {
+        font-family: "Computer Modern";
+        src: url('/static/fonts/cmunsx.otf');
+        font-weight: bold;
+      }
+
+      @font-face {
+        font-family: "Computer Modern";
+        src: url('/static/fonts/cmunsi.otf');
+        font-style: italic, oblique;
+      }
+
+      @font-face {
+        font-family: "Computer Modern";
+        src: url('/static/fonts/cmunbxo.otf');
+        font-weight: bold;
+        font-style: italic, oblique;
+      } */
+    
+      body {
+        font-family: "Computer Modern";
+        font-size: 1.5rem;
+        margin: auto;
+        max-width: 90ch;
+      }
+    </style>    
+  </head>
+  <body>
+    <script>
+      document.body.addEventListener('htmx:configRequest', function(evt) {
+        switch (evt.detail.path) {
+          case "/compile":
+          case "/solution":
+            evt.detail.parameters['innerHTML'] = evt.target.innerHTML;
+            break;
+          case "/hint":
+            let i = 1;
+            for (child of evt.target.children) {
+              evt.detail.parameters[`Hint ${i}`] = child.innerHTML;
+              i++;
+            }
+            break;
+        }
+      });
+    </script>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #{
+        pad(
+          top: 3em,
+          align(center)[
+            #block(text(weight: 700, 1.75em, title), stroke: none)
+            #v(1em, weak: true)
+            #date
+          ]
+        )
+
+        // Author information.
+        pad(
+          top: 0.5em,
+          bottom: 0.5em,
+          x: 2em,
+          grid(
+            columns: (1fr,) * calc.min(3, authors.len()),
+            gutter: 1em,
+            ..authors.map(author => align(center, strong(author))),
+          ),
+        )
+      }
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      As the name suggests, constrained optimization refers to optimizing (i.e. finding the minimum or maximum of) a function with one or many parameters subject to some constraints.
+
+      Let's start with an example!
+    </div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Problem 1*: Maximize $f(x_1, x_2) = 3x_1^2 + 5x_2^2$ subject to $x_1^2 + x_2^2 = 1$
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/hint" hx-trigger="load" hx-target="next div" hidden>
+      <span>
+        #hint[ Intuititvely, we want to make $x_2$ as large as possible ]
+      </span>
+      <span>
+        #hint[ $f(x_1, x_2) = 3(x_1^2 + x_2^2) + 2x_2^2$ ]
+      </span>
+    </div>
+    <div></div>
+    
+    <div hx-post="/solution" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Solution* (answer $f(0, 1) = 5$):
+        There are a few ways to approach this problem.
+
+        *Solution 1*: Note that $f(x_1, x_2) = 3x_1^2 + 5x_2^2 = 3(x_1^2 + x_2^2) + 2x_2^2 = 3 + 2x_2^2$. Since $x_2^2 <= 1$ and equality holds when $(x_1, x_2) = (0, 1)$, $f$ is maximized at $f(0, 1) = 5$.
+
+        *Solution 2*: Let $a_1 = x_1^2$, $a_2 = x_2^2$. Thus, we wish to maximize
+        $ f(x_1, x_2) = 3x_1^2 + 5x_2^2 = 3a_1 + 5a_2 $
+        subject to $x_1^2 + x_2^2 = 1$ or $a_1 + a_2 = 1$ and $a_1 >= 0$, $a_2 >= 0$. Intuitively, we want to make $a_2$ as large as possible. Note that $3a_1 + 5a_2 >= 5a_1 + 5a_2 = 5$, since $a_1 >= 0$ and equality holds when $(a_1, a_2) = (0, 1)$. Thus, $f$ is maximized at $f(0, 1) = 5$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      In constrained optimization problems, we call the function we are trying to optimize the objective function. For example, in the above problem $f$ is the objective function.
+
+      For the rest of this project, we will be focusing on optimizations with the constraint that $norm(vr(x)) = 1$.
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Problem 2*: Let $A = mat(3, 0; 0, 5;)$. Maximize $f(vr(x)) = vr(x)^TT A vr(x)$ subject to $norm(vr(x)) = 1$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/hint" hx-trigger="load" hx-target="next div" hidden>
+      <span>
+        #hint[Let $vr(x) = vec(x_1, x_2)$ and rewrite the objective function and constraints]
+      </span>
+      <span>
+        #hint[Is this problem similar to *Problem 1* in some way?]
+      </span>
+    </div>
+    <div></div>
+
+    <div hx-post="/solution" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Solution* (answer $f(0, 1) = 5$):
+        Let $vr(x) = vec(x_1, x_2)$. Our objective function rewrites itself to:
+        $ f(x_1, x_2) = vecrow(x_1, x_2) mat(3, 0; 0, 5;) vec(x_1, x_2) = 3x_1^2 + x_2^2 $
+        Our constraint $norm(vr(x)) = 1$ rewrites itself to $sqrt(x_1^2 + x_2^2) = 1 => x_1^2 + y_1^2 = 1$.
+
+        Observe that this is exactly the same as in *Problem 1*, so our answer is once again $5$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Problem 3*: Let $A = mat(1, 0, 0; 0, 4, 0; 0, 0, 2;)$. Maximize $f(vr(x)) = x^TT A x$ subject to $norm(vr(x)) = 1$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/hint" hx-trigger="load" hx-target="next div" hidden>
+      <span>#hint[ This looks pretty similar to problem 2. Can we do a similar thing? ]</span>
+      <span>#hint[ Once again, let $vr(x) = vec(x_1, x_2, x_3)$ and rewrite the objective function and constraints ]</span>
+    </div>
+    <div></div>
+
+    <div hx-post="/solution" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Solution* (answer $f(0, 1, 0) = 4$):
+        Let $vr(x) = vec(x_1, x_2, x_3)$. Our objective function rewrites itself to:
+        $ f(x_1, x_2, x_3) = vecrow(x_1, x_2, x_3) mat(1, 0, 0; 0, 4, 0; 0, 0, 2;) vec(x_1, x_2, x_3) = x_1^2 + 4x_2^2 + 2x_3^2 $
+        Our constraint is $x_1^2 + x_2^2 + x_3^2 = 1$. Again, it intuitively makes sense to make $x_2$ as large as possible. Indeed, we have $x_1^2 + 4x_2^2 + 2x_3^2 <= 4x_1^2 + 4x_2^2 + 4x_3^2 = 4$, and equality holds at $(0, 1, 0)$. Thus, $f$ is maximized at $f(0, 1, 0) = 4$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Theorem 1*: Let $D$ be a diagonal n by n matrix. Say we wish to maximize $f(vr(x)) = vr(x)^TT A vr(x)$ subject to $norm(vr(x)) = 1$. Let $m = max_i D_(i,i)$ be the maximal diagonal entry of $D$, and let $j$ be any integer satisfying $m = D_(j, j)$. The maximal value of $f$ under these constraints is $x$, achieved at $x_1 = x_2 = dots.h = x_(j - 1) = x_(j + 1) = dots.h = x_(n - 1) = x_n = 0$ and $x_j = 1$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Problem 4*: Let $A = mat(4, 1; 1, 4;)$. Maximize $f(vr(x)) = vr(x)^TT A vr(x)$ subject to $norm(vr(x)) = 1$.
+
+        *Bonus*: What's special about the maximal value? What's special about $vr(x)$?
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/hint" hx-trigger="load" hx-target="next div" hidden>
+      <span>#hint[$A$ is symmetric. This is not a coincidence.]</span>
+      <span>#hint[We can write $A = P D P^TT$ for orthogonal matrix $P$ and diagonal matrix $D$.]</span>
+      <span>#hint[Say we wish to maximize $vr(x)^TT P D P^TT vr(x)$. What if we tried letting $u = P^TT vr(x)$. What is $u^TT$?]</span>
+      <span>#hint[Now we want to maximize $vr(u)^TT D vr(u)$. Looks awfully familiar, doesn't it? How can we find $vr(x)$ from $vr(u)$?]</span>
+      <span>#hint[(for the  bonus): When we maximize $f$, $vr(u)$ is a very special vector. Is there anything special about $vr(x)$?]</span>
+    </div>
+    <div></div>
+
+    <div hx-post="/solution" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Solution* (answer $f(1/sqrt(2), 1/sqrt(2)) = 5$):
+        $A$ is symmetric because $A = A^TT$. Thus, there exists orthogonal matrix $P$ and diagonal matrix $D$ such that $A = P D P^TT$. Calculating, we get $ P = mat(-1/sqrt(2), 1/sqrt(2); 1/sqrt(2), 1/sqrt(2);), D = mat(3, 0; 0, 5) $
+        $ f(vr(x)) = vr(x)^TT A vr(x) = vr(x)^TT P D P^TT vr(x) $
+        Now, let $vr(u)$ = $P^TT vr(x)$. Since $vr(u)^TT = (P^TT vr(x))^TT = vr(x)^TT P^TT^TT = vr(x)^TT P$,
+        $ f(vr(x)) = vr(u)^TT D vr(u) = vr(u)^TT mat(3, 0; 0, 5;) vr(u) $
+        Furthermore, $norm(vr(u)) = norm(P^TT vr(x)) = norm(vr(x)) = 1$ since $P$ is orthogonal.
+
+        Note that this is exactly *Problem 2*! The function is maximized when $vr(u) = vec(0, 1)$ with $f(vr(u)) = 5$.
+
+        Now to obtain $vr(x)$, $vr(u) = P^TT vr(x)$, so $P vr(u) = P P^TT vr(x) = I_n vr(x) = vr(x)$, since $P$ is orthogonal. Thus, $vr(x) = P vr(u) = vec(1/sqrt(2), 1/sqrt(2))$.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      There's actually something special about both the maximal value and the corresponding value of $vr(x)$.
+
+      #rainbow[
+        *Theorem 2*: Let $A$ be a symmetric matrix, $P$ an orthogonal matrix, and $D$ a diagonal matrix satisfying $A = P D P^TT$. Say we want to maximize $f(vr(x)) = vr(x)^TT A vr(x)$ subject to $norm(vr(x)) = 1$. Let $m$ be the maximal eigenvalue of $A$. The maximal value of $f$ is $m$, and any eigenvector $vr(v)$ corresponding to $m$ satisfies $f(vr(v)) = m$.
+      ]
+
+      This is true because all diagonal entries of $D$ are eigenvalues of $A$, and by *Theorem 1* the maximal value of $vr(u)^TT D vr(u)$ subject to $norm(u) = 1$ is the maximal diagonal entry of $D$. The special property of $vr(u)$ being all $0$s and a $1$ means that $vr(x) = P vr(u)$ is a column of $P$, which is an eigenvector corresponding to the eigenvalue.
+
+      Now we'll see how we can reduce the case for general $A$ to the symmetric case.
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Problem 5*: Let $vr(x) = vec(x_1, x_2)$. Expand $vr(x)^TT mat(4, 1; 1, 4;) vr(x)$ and $vr(x)^TT mat(4, 0; 2, 4;) vr(x)$. What do you notice? How do we reduce the general case of optimizing $vr(x)^T A vr(x)$ subject to $norm(vr(x)) = 1$ to the case where $A$ is symmetric?
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/hint" hx-trigger="load" hx-target="next div" hidden>
+    </div>
+    <div></div>
+
+    <div hx-post="/solution" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Solution* (answer $4x_1^2 + 2x_1x_2 + 4x_2^2$):
+        $ vr(x)^TT mat(4, 1; 1, 4;) vr(x) &= vecrow(x_1, x_2) mat(4, 1; 1, 4;) vec(x_1, x_2)\
+        &= vecrow(4x_1 + x_2, x_1 + 4x_2) vec(x_1, x_2)\
+        &= 4x_1^2 + x_1x_2 + x_1x_2 + 4x_2^2\
+        &= 4x_1^2 + 2x_1x_2 + 4x_2^2 $
+
+        Similarly,
+        $ vr(x)^TT mat(4, 0; 2, 4;) vr(x) = 4x_1^2 + 2x_1x_2 + 4x_2^2 $
+
+        Observe that these two are the same.
+      ]
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      #rainbow[
+        *Lemma 1*:Let $A$ be a $n$ by $n$ matrix and $vr(x) = vec(x_1, x_2, dots.h, x_n)$. Then,
+        $ vr(x)^TT A vr(x) = sum_(1 <= i, j <= n) A_(i, j) x_i x_j $
+      ]
+
+      This is left as an exercise to the reader #emoji.face.tongue.
+
+      #rainbow[
+        *Lemma 2*: If $A$, $B$ are $n$ by $n$ matrices satisfying $A + A^TT = B + B^TT$, $vr(x)^TT A x = vr(x)^TT B vr(x)$ for all vectors $vr(x) in RR^n$
+      ]
+
+      Consider the coefficient $c_(i, j)$ of $x_i x_j$ from *Lemma 1*. If $i != j$, then $ c_(i, j) = A_(i, j) + A_(j, i) = B_(i, j) + B_(j, i) $ since $A + A^TT = B + B^TT$. Also, $c_(i, i) = A_(i, i) = B_(i, i)$. Thus, the expansions of both $vr(x)^TT A vr(x)$ and $vr(x)^TT B vr(x)$ are the same and the expressions are equal.
+
+      Let $B = (A + A^TT) / 2$.
+      $ A + A^TT = B + B^TT = (A + A^TT) / 2 + ((A + A^TT) / 2)^TT = A+A^TT $
+      so optimizing $vr(x)^TT A vr(x)$ is the same as optimizing $vr(x)^TT B vr(x)$ by *Lemma 2*. Since $B$ is symmetric, we've successfully reduced the general case to the symmetric case.
+    </div>
+    <div></div>
+
+    <div hx-post="/compile" hx-trigger="load" hx-target="next div" hidden>
+      = Connection to Calc 3
+
+      Did you see multivariable optimization and think Calc 3 lagrange multipliers? It turns out there actually is a rather interesting connection between lagrange multipliers and eigenvalues.
+
+      Let's approach the general problem of optimizing $vr(x)^TT A vr(x)$ subject to $norm(vr(x)) = 1$ using Calc 3.
+
+      Let's assume $A$ is upper triangular, and we can reduce the general version to the upper triangular case.
+
+      Thus, our objective function becomes
+      $ f(vr(x)) = sum_(1 <= i <= j <= n) A_(i, j) x_i x_j $
+
+      Our constraint function is
+      $ g(vr(x)) = x_1^2 + x_2^2 + dots.h + x_n^2 = 1 $
+
+      Applying lagrange multipliers, we want $grad f = lambda grad g$. Let $C = A + A^TT$. Thus, $C_(i, j) = C_(j, i) = A_(i, j)$ for $i < j$ and $C_(i, i) = 2A_(i, i)$
+
+      $ pdv(f, x_i) &= pdv(, x_i) A_(1, i) x_1 x_i + A_(2, i) x_2 x_i + dots.h + A_(i - 1, i) x_(i - 1) x_i + A_(i, i) x_i^2 + A_(i, i + 1) x_i x_(i + 1) + dots.h + A_(i, n) x_i x_n\
+      &= A_(1, i) x_1 + A_(2, i) x_2 + dots.h + A_(i - 1, i) x_(i - 1) + 2A_(i, i) x_i + A_(i, i + 1) x_(i + 1) + dots.h + A_(i, n) x_n\
+      &= C_(i, 1) x_1 + C_(i, 2)  x_2 + dots.h + C_(i, n) x_n = C_i vr(x) $
+
+      $ grad f = vec(pdv(f, x_1), pdv(f, x_2), dots.v, pdv(f, x_n)) = vec(C_1 vr(x), C_2 vr(x), dots.v, C_n vr(x)) = C vr(x) $
+
+      $ pdv(g, x_i) = 2 x_i $
+      $ grad g = vec(2x_1, 2x_2, dots.v, 2x_n) = 2vr(x) $
+
+      Since we want $grad f = lambda grad g$,
+      $ grad f &= lambda grad g\
+      C vr(x) &= lambda 2vr(x)\
+      C/2 vr(x) &= lambda vr(x) $
+
+      Note that this is exactly the condition for $vr(x)$ being an eigenvector of $C/2$.
+
+      Thus, the function is maximized at an eigenvector of $(A + A^TT) / 2$.
+      \
+      \
+    </div>
+    <div></div>
+  </body>
+</html>
