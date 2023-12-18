@@ -16,16 +16,19 @@ global_rules = open(join("data", "global.ty")).read() + "\n"
 compiler = join("data", "typst")
 
 def process(input: str) -> str:
-    input = unescape(input)
-    typst = NamedTemporaryFile()
-    typst.write(global_rules.encode())
-    typst.write(input.encode())
-    typst.flush()
-    svg = NamedTemporaryFile(mode="r+", suffix=".svg")
-    run(f"{compiler} compile -f svg {typst.file.name} {svg.file.name}", shell=True, check=True)
-    typst.close()
-    output = svg.read()
-    svg.close()
+    try:
+        input = unescape(input)
+        typst = NamedTemporaryFile()
+        typst.write(global_rules.encode())
+        typst.write(input.encode())
+        typst.flush()
+        svg = NamedTemporaryFile(mode="r+", suffix=".svg")
+        run(f"{compiler} compile -f svg {typst.file.name} {svg.file.name}", shell=True, check=True)
+        typst.close()
+        output = svg.read()
+        svg.close()
+    except Exception as e:
+        return f"An error occurred: {e}"
     return output
 
 @app.post("/compile")
