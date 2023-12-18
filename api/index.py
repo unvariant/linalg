@@ -4,7 +4,9 @@ from flask import request
 from subprocess import run
 from tempfile import NamedTemporaryFile
 from html import unescape
+from os import urandom, remove
 from os.path import join
+from tempfile import gettempdir
 
 app = Flask(__name__)
 
@@ -14,19 +16,20 @@ def index():
 
 global_rules = open(join("data", "global.ty")).read() + "\n"
 compiler = join("data", "typst")
+tmpdir = gettempdir()
 
 def process(input: str) -> str:
     try:
         input = unescape(input)
-        typst = NamedTemporaryFile()
-        typst.write(global_rules.encode())
-        typst.write(input.encode())
+        typst = open(join(tmpdir, urandom(8).hex()), "w+")
+        typst.write(global_rules)
+        typst.write(input)
         typst.flush()
-        svg = NamedTemporaryFile(mode="r+", suffix=".svg")
-        run(f"{compiler} compile -f svg {typst.file.name} {svg.file.name}", shell=True, check=True)
-        typst.close()
+        svg = open(join(tmpdir, urandom(8).hex() + ".svg"), "r")
+        run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, check=True)
         output = svg.read()
-        svg.close()
+        remove(typst.name)
+        remove(svg.name)
     except Exception as e:
         return f"An error occurred: {e}"
     return output
