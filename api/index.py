@@ -4,7 +4,7 @@ from flask import request
 from subprocess import run
 from tempfile import NamedTemporaryFile
 from html import unescape
-from os import urandom, remove
+from os import urandom, remove, environ
 from os.path import join
 from tempfile import gettempdir
 from traceback import format_exc
@@ -27,7 +27,9 @@ def process(input: str) -> str:
         typst.write(input)
         typst.flush()
         svg = open(join(tmpdir, urandom(8).hex() + ".svg"), "a+")
-        result = run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, capture_output=True)
+        env = environ.copy()
+        env["HOME"] = tmpdir
+        result = run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, capture_output=True, env=env)
         output = "\n".join([result.stdout.decode(), result.stderr.decode()])
         # output = svg.read()
         remove(typst.name)
