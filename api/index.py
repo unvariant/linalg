@@ -27,8 +27,8 @@ def process(input: str) -> str:
         typst.write(input)
         typst.flush()
         svg = open(join(tmpdir, urandom(8).hex() + ".svg"), "a+")
-        run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, check=True)
-        output = svg.read()
+        output = run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, capture_output=True)
+        # output = svg.read()
         remove(typst.name)
         remove(svg.name)
     except Exception as e:
