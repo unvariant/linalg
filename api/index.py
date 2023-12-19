@@ -32,7 +32,7 @@ def process(input: str) -> str:
         remove(typst.name)
         remove(svg.name)
     except Exception as e:
-        return format_exc(e)
+        return format_exc()
     return output
 
 @app.post("/compile")
