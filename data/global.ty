@@ -3,7 +3,8 @@
     "Ryan Bai",
     "Owen Kwan",
 )
-#let date = "December 15, 2023"
+#let today = datetime.today()
+#let date = today.display("[month repr:long] [day], [year]")
 
 // Set the document's basic properties.
 #set document(author: authors, title: title)
