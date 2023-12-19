@@ -2,7 +2,6 @@ from flask import Flask
 from flask import send_file, render_template
 from flask import request
 from subprocess import run
-from tempfile import NamedTemporaryFile
 from html import unescape
 from os import urandom, remove, environ
 from os.path import join
