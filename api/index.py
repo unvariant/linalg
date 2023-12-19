@@ -31,7 +31,7 @@ def process(input: str) -> str:
         env["HOME"] = tmpdir
         result = run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, capture_output=True, env=env)
         output = "\n".join([result.stdout.decode(), result.stderr.decode()])
-        # output = svg.read()
+        output += svg.read()
         remove(typst.name)
         remove(svg.name)
     except Exception as e:
