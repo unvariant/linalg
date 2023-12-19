@@ -7,6 +7,7 @@ from html import unescape
 from os import urandom, remove
 from os.path import join
 from tempfile import gettempdir
+from traceback import format_exc
 
 app = Flask(__name__)
 
@@ -31,7 +32,7 @@ def process(input: str) -> str:
         remove(typst.name)
         remove(svg.name)
     except Exception as e:
-        return f"An error occurred: {e}"
+        return format_exc(e)
     return output
 
 @app.post("/compile")
