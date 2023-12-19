@@ -26,7 +26,7 @@ def process(input: str) -> str:
         typst.write(global_rules)
         typst.write(input)
         typst.flush()
-        svg = open(join(tmpdir, urandom(8).hex() + ".svg"), "r+")
+        svg = open(join(tmpdir, urandom(8).hex() + ".svg"), "a+")
         run(f"{compiler} compile -f svg {typst.name} {svg.name}", shell=True, check=True)
         output = svg.read()
         remove(typst.name)
