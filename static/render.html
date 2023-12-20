@@ -153,8 +153,8 @@
       #rainbow[
         *Solution* (answer $f(0, 1) = 5$):
         Let $vr(x) = vec(x_1, x_2)$. Our objective function rewrites itself to:
-        $ f(x_1, x_2) = vecrow(x_1, x_2) mat(3, 0; 0, 5;) vec(x_1, x_2) = 3x_1^2 + x_2^2 $
-        Our constraint $norm(vr(x)) = 1$ rewrites itself to $sqrt(x_1^2 + x_2^2) = 1 => x_1^2 + y_1^2 = 1$.
+        $ f(x_1, x_2) = vecrow(x_1, x_2) mat(3, 0; 0, 5;) vec(x_1, x_2) = 3x_1^2 + 5x_2^2 $
+        Our constraint $norm(vr(x)) = 1$ rewrites itself to $sqrt(x_1^2 + x_2^2) = 1 => x_1^2 + x_1^2 = 1$.
 
         Observe that this is exactly the same as in *Problem 1*, so our answer is once again $5$.
       ]
